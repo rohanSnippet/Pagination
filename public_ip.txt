@@ -1,0 +1,2 @@
+public id for aws instance for ci-demo-application
+13.61.178.140:8080/hello
