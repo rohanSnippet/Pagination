@@ -4,7 +4,7 @@ pipeline {
         maven 'M3' // Must match the name in Global Tool Configuration
     }
     environment {
-        TOMCAT_HOME = "C:\\Tomcat"
+        TOMCAT_HOME = "C:\Tomcat 10.1"
         WAR_NAME = "springbootapp.war"
     }
 
