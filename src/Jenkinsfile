@@ -1,6 +1,8 @@
 pipeline {
     agent { label 'windows-host' } // Use your Windows Agent!
-
+    tools {
+        maven 'M3' // Must match the name in Global Tool Configuration
+    }
     environment {
         TOMCAT_HOME = "C:\\Tomcat"
         WAR_NAME = "springbootapp.war"
