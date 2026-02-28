@@ -1,0 +1,50 @@
+pipeline {
+    agent { label 'windows-host' } // Use your Windows Agent!
+
+    environment {
+        TOMCAT_HOME = "C:\\Tomcat"
+        WAR_NAME = "springbootapp.war"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                // Generates the .war file in the target folder
+                bat 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Stop Tomcat') {
+            steps {
+                // Using '|| rem' prevents the pipeline from failing if Tomcat is already stopped
+                bat 'call "%TOMCAT_HOME%\\bin\\shutdown.bat" || rem'
+                sleep 5 // Replaced 'timeout' with 'sleep' to avoid redirection errors
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            steps {
+                // Deletes old app folder and copies new war
+                bat 'if exist "%TOMCAT_HOME%\\webapps\\springbootapp" rd /s /q "%TOMCAT_HOME%\\webapps\\springbootapp"'
+                bat 'copy target\\demo-*.war "%TOMCAT_HOME%\\webapps\\%WAR_NAME%"'
+            }
+        }
+
+        stage('Start Tomcat') {
+            steps {
+                bat 'call "%TOMCAT_HOME%\\bin\\startup.bat"'
+            }
+        }
+    }
+
+    post {
+        success { echo "Deployed to http://localhost:9000/" }
+        failure { echo "Pipeline failed. Check Maven logs." }
+    }
+}
